@@ -11,6 +11,22 @@ for me so maybe it'll work for you.
 
 Almost.
 
+## Files
+
+`template.py` is the template engine. The other files are for demonstration or
+testing.
+
+## API
+
+The API consists of just two functions, `render` and `render_path`.
+
+`render(tmpl, ctx={})` renders the template string `tmpl` in the context `ctx`
+(plus the default `wrap` and `let` block functions unless `ctx` overrides
+them). It returns the rendered string.
+
+`render_path(tmpl_path, ctx={})` simply reads the file named `tmpl_path` and renders
+it, returning the rendered string.
+
 ## Template language
 
 Character encoding is environment-dependent. On Linux it's UTF-8. I haven't
@@ -48,8 +64,9 @@ The `let` block assigns a value to a name in the current context. The syntax is
 `{{#let}}name:value{{/let}}`. The value can of course contain newlines.
 
 The `wrap` block is used to render another template.  The syntax is
-`{{#wrap}}filename:inside{{/wrap}}`. `filename` can be a relative or absolute
-path, and its contents are rendered in the current context with  the `in`
+`{{#wrap}}filename:inside{{/wrap}}`. `filename` is relative to the current
+template file's containing directory (if it's a file) or the current directory
+(if not).  Its contents are rendered in the current context with  the `in`
 variable equal to `inside`.
 
 ## Implementation details
@@ -70,3 +87,8 @@ there are a few other accuracy issues.
 
 The current implementation is probably slow, since templates aren't
 preparsed or cached in any way.
+
+`render` and `render_path` return the entire rendered string at once, which
+might be inconvenient if it's very large and not much memory is available.
+Returning an iterator might help in that case, but I don't know if that's a use
+case worth supporting.
