@@ -27,7 +27,7 @@ def wrap(s, ctx):
 def let(s, ctx):
     i = s.find(":")
     if i == -1:
-        raise Exception("`wrap` section must contain a `:`")
+        raise Exception("`let` section must contain a `:`")
     key = s[:i]
     val = s[i+1 : ]
     ctx[key] = val
