@@ -1,0 +1,13 @@
+{{#let}}title:Hi there!{{/let}}
+{{#let}}head_extra:
+<script type="application/javascript">
+alert("Hello, world!");
+</script>
+{{/let}}
+{{#wrap}}base.htmo:
+    <main>
+        <div>
+            <p>Hello, world!</p>
+        </div>
+    </main>
+{{/wrap}}
