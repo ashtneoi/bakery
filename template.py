@@ -108,10 +108,10 @@ def render(tmpl, ctx={}):
                 s = "".join(ss)
             elif hasattr(v, "__call__"):
                 s = v(inside, ctx)
+            elif v == "" or v is False:
+                s = ""
             elif isinstance(v, str) or v is True:
                 s = render(inside, ctx)
-            elif v is False:
-                s = ""
             else:
                 raise Exception("Invalid type")
             subs[sub_idx] = (i1, t2, s)
