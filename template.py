@@ -132,7 +132,6 @@ def render(tmpl, ctx={}):
 
 
 def render_path(tmpl_path, ctx={}):
-    ctx = default_ctx(ctx)
     ctx.setdefault(INTERNAL, {})["tmpl_dir"] = path.dirname(tmpl_path)
 
     with open(tmpl_path, "r") as f:
