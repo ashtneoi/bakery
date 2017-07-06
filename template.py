@@ -79,7 +79,7 @@ def render(tmpl, ctx={}):
 
     i = 0
     subs = []  # list of (i1, i2, s)
-    sections = []  # stack of (sub_idx, tag)
+    section = None  # (sub_idx, tag) or None
 
     while True:
         f = find_tag(tmpl, i)
@@ -90,10 +90,11 @@ def render(tmpl, ctx={}):
         if tag[0] == "#":
             tag = tag[1:]
             subs.append((t1, t2, None))
-            sections.append((len(subs) - 1, tag))
+            section = (len(subs) - 1, tag)
         elif tag[0] == "/":
             tag = tag[1:]
-            sub_idx, top_tag = sections.pop()
+            sub_idx, top_tag = section
+            section = None
             if top_tag != tag:
                 raise Exception("Mis-nested section tags")
             i1, s1, _ = subs[sub_idx]
@@ -115,17 +116,18 @@ def render(tmpl, ctx={}):
             else:
                 raise Exception("Invalid type")
             subs[sub_idx] = (i1, t2, s)
-        elif tag[-1] == "?":
-            tag = tag[:-1]
-            v = ctx.get(tag, MISSING)
-            if v is MISSING:
-                v = ""
-            subs.append((t1, t2, v))
-        else:
-            subs.append((t1, t2, str(ctx[tag])))
+        elif section is None:
+            if tag[-1] == "?":
+                tag = tag[:-1]
+                v = ctx.get(tag, MISSING)
+                if v is MISSING:
+                    v = ""
+                subs.append((t1, t2, v))
+            else:
+                subs.append((t1, t2, str(ctx[tag])))
         i = t2
 
-    if sections:
+    if section:
         raise Exception("Unterminated section \"{}\"".format(sections[-1][1]))
 
     return substitute(tmpl, subs)
