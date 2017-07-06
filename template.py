@@ -87,16 +87,13 @@ def render(tmpl, ctx={}):
             break
         t1, t2 = f
         tag = tmpl[t1+2 : t2-2]
-        if tag[0] == "#":
-            tag = tag[1:]
-            subs.append((t1, t2, None))
-            block = (len(subs) - 1, tag)
-        elif tag[0] == "/":
+        if tag[0] == "/":
             tag = tag[1:]
             sub_idx, top_tag = block
-            block = None
             if top_tag != tag:
-                raise Exception("Mis-nested block tags")
+                i = t2
+                continue
+            block = None
             i1, s1, _ = subs[sub_idx]
             v = ctx[tag]
             inside = tmpl[s1:t1]
@@ -117,7 +114,11 @@ def render(tmpl, ctx={}):
                 raise Exception("Invalid type")
             subs[sub_idx] = (i1, t2, s)
         elif block is None:
-            if tag[-1] == "?":
+            if tag[0] == "#":
+                tag = tag[1:]
+                subs.append((t1, t2, None))
+                block = (len(subs) - 1, tag)
+            elif tag[-1] == "?":
                 tag = tag[:-1]
                 v = ctx.get(tag, MISSING)
                 if v is MISSING:
