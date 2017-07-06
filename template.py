@@ -17,7 +17,7 @@ INTERNAL = Constant("INTERNAL")
 def wrap(s, ctx):
     i = s.find(":")
     if i == -1:
-        raise Exception("`wrap` section must contain a `:`")
+        raise Exception("`wrap` block must contain a `:`")
     outer_path = path.join(ctx[INTERNAL]["tmpl_dir"], s[:i])
     ctx = ctx.copy()
     ctx["in"] = render(s[i+1 : ], ctx)
@@ -27,7 +27,7 @@ def wrap(s, ctx):
 def let(s, ctx):
     i = s.find(":")
     if i == -1:
-        raise Exception("`let` section must contain a `:`")
+        raise Exception("`let` block must contain a `:`")
     key = s[:i]
     val = s[i+1 : ]
     ctx[key] = val
@@ -79,7 +79,7 @@ def render(tmpl, ctx={}):
 
     i = 0
     subs = []  # list of (i1, i2, s)
-    section = None  # (sub_idx, tag) or None
+    block = None  # (sub_idx, tag) or None
 
     while True:
         f = find_tag(tmpl, i)
@@ -90,22 +90,22 @@ def render(tmpl, ctx={}):
         if tag[0] == "#":
             tag = tag[1:]
             subs.append((t1, t2, None))
-            section = (len(subs) - 1, tag)
+            block = (len(subs) - 1, tag)
         elif tag[0] == "/":
             tag = tag[1:]
-            sub_idx, top_tag = section
-            section = None
+            sub_idx, top_tag = block
+            block = None
             if top_tag != tag:
-                raise Exception("Mis-nested section tags")
+                raise Exception("Mis-nested block tags")
             i1, s1, _ = subs[sub_idx]
             v = ctx[tag]
             inside = tmpl[s1:t1]
             if hasattr(v, "__iter__") and not isinstance(v, str):
                 ss = []
                 for c in v:
-                    section_ctx = ctx.copy()
-                    section_ctx.update(c)
-                    ss.append(render(inside, section_ctx))
+                    block_ctx = ctx.copy()
+                    block_ctx.update(c)
+                    ss.append(render(inside, block_ctx))
                 s = "".join(ss)
             elif hasattr(v, "__call__"):
                 s = v(inside, ctx)
@@ -116,7 +116,7 @@ def render(tmpl, ctx={}):
             else:
                 raise Exception("Invalid type")
             subs[sub_idx] = (i1, t2, s)
-        elif section is None:
+        elif block is None:
             if tag[-1] == "?":
                 tag = tag[:-1]
                 v = ctx.get(tag, MISSING)
@@ -127,8 +127,8 @@ def render(tmpl, ctx={}):
                 subs.append((t1, t2, str(ctx[tag])))
         i = t2
 
-    if section:
-        raise Exception("Unterminated section \"{}\"".format(sections[-1][1]))
+    if block:
+        raise Exception("Unterminated \"{}\" block".format(block[-1][1]))
 
     return substitute(tmpl, subs)
 
