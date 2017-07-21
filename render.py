@@ -7,6 +7,6 @@ from template import render_path
 
 
 if len(argv) != 2:
-    print("Usage:  render.py NAME", file=stderr)
+    stderr.write("Usage:  render.py NAME\n")
     exit(1)
 stdout.write(render_path(argv[1]))
