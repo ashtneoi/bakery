@@ -13,7 +13,7 @@ Almost.
 
 ## Files
 
-`template.py` is the template engine. The other files are for demonstration or
+`bakery.py` is the template engine. The other files are for demonstration or
 testing.
 
 ## API

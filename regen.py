@@ -3,7 +3,7 @@
 
 import os
 
-from template import render_path
+from bakery import render_path
 
 
 def regen(tmpl_path):

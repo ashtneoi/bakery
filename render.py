@@ -3,7 +3,7 @@
 
 from sys import argv, stderr, stdout
 
-from template import render_path
+from bakery import render_path
 
 
 if len(argv) != 2:
