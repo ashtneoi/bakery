@@ -2,10 +2,10 @@
 
 ## What is it?
 
-It's a tiny template engine for Python. The implementation is single-module,
-cross-platform (I think), and dependency-free, and the language is small enough
-to learn in a few minutes. That may or may not be a good thing, but it works
-for me so maybe it'll work for you.
+It's a tiny template engine for Python 2 and 3. The implementation is
+single-module, cross-platform (I think), and dependency-free, and the language
+is small enough to learn in a few minutes. That may or may not be a good thing,
+but it works for me so maybe it'll work for you.
 
 ## Is it stable?
 
