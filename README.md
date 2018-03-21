@@ -18,7 +18,7 @@ testing.
 
 ## API
 
-The API consists of just two functions, `render` and `render_path`.
+The API consists of two functions, `render` and `render_path`.
 
 `render(tmpl, ctx={})` renders the template string `tmpl` in the context `ctx`
 (plus the default `wrap` and `let` block functions unless `ctx` overrides
@@ -29,8 +29,8 @@ it, returning the rendered string.
 
 ## Template language
 
-Character encoding is environment-dependent. On Linux it's UTF-8. I haven't
-tested other operating systems yet.
+Character encoding is environment-dependent. On Linux with CPython, it's UTF-8.
+Not sure about other environments yet (especially Windows).
 
 A template contains plain text and directives. Directives are enclosed in
 double curly braces ("`{{}}`") and are evaluated when the template is rendered.
@@ -43,12 +43,12 @@ context doesn't contain `name`, an error is raised.
 
 `{{?name}}` is an optional variable reference. It renders the same as a
 normal variable reference except that if `name` is missing from the context, it
-simply renders to the empty string.
+renders to the empty string.
 
 A block is enclosed in matching `{{#name}}` and `{{/name}}` directives. If
 `name` refers to True or a nonempty string, the block body is rendered by
 itself. If `name` is False or the empty string, the entire block renders to the
-empty string.  If `name` refers to an iterable of dicts, then for each dict,
+empty string. If `name` refers to an iterable of dicts, then for each dict,
 the block body is rendered with that dict added to the context. Finally, if
 `name` refers to a function, the function is called with two arguments: the
 block body (as an unevaluated string) and the current context (which may not be
@@ -57,17 +57,17 @@ in the context, an error is raised.
 
 ## Provided blocks
 
-Two blocks are provided by default. You can (and should) write your own if they
-don't meet your needs.
+Two blocks are provided by default. You can write your own if you want.
 
 The `let` block assigns a value to a name in the current context. The syntax is
-`{{#let}}name:value{{/let}}`. The value can of course contain newlines.
+`{{#let}}name:value{{/let}}`. The value can contain newlines.
 
-The `wrap` block is used to render another template.  The syntax is
-`{{#wrap}}filename:inside{{/wrap}}`. `filename` is relative to the current
-template file's containing directory (if it's a file) or the current directory
-(if not).  Its contents are rendered in the current context with  the `in`
-variable equal to `inside`.
+The `wrap` block is used to render another template. The syntax is
+`{{#wrap}}filename:inside{{/wrap}}`. If the current template is a file,
+`filename` is relative to the current template's containing directory. If the
+current template is a string (it was invoked via `render(...)`), `filename` is
+relative to the current directory.  The block's contents are rendered in the
+current context with the `in` variable equal to `inside`.
 
 ## Implementation details
 
